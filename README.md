@@ -1,5 +1,3 @@
-# Mantine Next Template
+# NextJS, Prisma, NextAuth & PostgreSQL
 
-Get started with the template by clicking `Use this template` button on the top of the page.
-
-[Documentation](https://mantine.dev/guides/next/)
+Making a ToDo List application playing around a bit with NextJS, Prisma, NextAuth and PostgreSQL.
