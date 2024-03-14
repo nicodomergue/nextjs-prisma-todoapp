@@ -1,6 +1,6 @@
 "use client";
 
-import { Stack } from "@mantine/core";
+import { Stack, Text } from "@mantine/core";
 import React, { useEffect, useState } from "react";
 import ToDoCard from "./ToDoCard";
 import { v4 as uuid } from "uuid";
@@ -37,6 +37,7 @@ function ToDoList() {
     toDo: { id: undefined; title: string; description: string } | ToDo
   ) => {
     if (!toDo.id || action === "creating") {
+      // CREATE TO DO
       setToDos([
         ...toDos,
         {
@@ -46,8 +47,14 @@ function ToDoList() {
         },
       ]);
     } else {
+      // UPDATE TO DO
       setToDos(toDos.map((item) => (item.id === toDo.id ? toDo : item)));
     }
+  };
+
+  const handleDeleteToDo = (id: string) => {
+    // DELETE TO DO
+    setToDos(toDos.filter((item) => item.id !== id));
   };
 
   return (
@@ -57,17 +64,26 @@ function ToDoList() {
         isEditing={true}
         {...{ ...newToDoData, setCurrentEditingToDo, handleSubmitToDo }}
       />
-      {toDos.map((toDo) => (
-        <ToDoCard
-          key={toDo.id}
-          {...{
-            ...toDo,
-            currentEditingToDo,
-            setCurrentEditingToDo,
-            handleSubmitToDo,
-          }}
-        />
-      ))}
+      {toDos.length === 0 ? (
+        <>
+          <Text ta="center" mt="md" c="gray.5">
+            There are no ToDo's on the list
+          </Text>
+        </>
+      ) : (
+        toDos.map((toDo) => (
+          <ToDoCard
+            key={toDo.id}
+            {...{
+              ...toDo,
+              currentEditingToDo,
+              setCurrentEditingToDo,
+              handleSubmitToDo,
+              handleDeleteToDo,
+            }}
+          />
+        ))
+      )}
     </Stack>
   );
 }

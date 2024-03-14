@@ -14,6 +14,7 @@ interface ToDoCardProps extends ToDo {
     action: ToDoCardVariant,
     toDo: ToDo | { id: undefined; title: string; description: string }
   ) => void;
+  handleDeleteToDo?: (id: string) => void;
 }
 
 interface ToDoCardButtonSectionActions {
@@ -21,4 +22,5 @@ interface ToDoCardButtonSectionActions {
   setIsBeeingDeleted: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentEditingToDo: React.Dispatch<React.SetStateAction<string | null>>;
   handleSubmit: (e: React.MouseEvent<HTMLElement>) => void;
+  handleDelete?: (id: string) => void;
 }

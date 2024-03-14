@@ -15,17 +15,57 @@ import { v4 as uuid } from "uuid";
 import { useEffect, useRef, useState } from "react";
 import ToDoCardButtonsSection from "./ToDoCardButtonsSection";
 
+interface NotificationProps {
+  message: string;
+  callback?: () => void;
+}
+
 const notification = {
-  error: ({ message, callback }: { message: string; callback: () => void }) => {
+  error: ({ message, callback }: NotificationProps) => {
     return notifications.show({
       id: `notification-${uuid()}`,
       withCloseButton: true,
-      onOpen: () => callback(),
+      onOpen: () => (callback ? callback() : ""),
       autoClose: 5000,
       title: "There was an error",
       message,
       color: "red",
+      style: { backgroundColor: "#fef2f2" },
     });
+  },
+  loading: ({ message, callback }: NotificationProps) => {
+    return notifications.show({
+      id: `notification-${uuid()}`,
+      withCloseButton: false,
+      autoClose: false,
+      title: "Loading...",
+      message,
+      color: "blue",
+      loading: true,
+    });
+  },
+  success: ({
+    toastId,
+    action,
+    callback,
+  }: {
+    toastId: string;
+    action: ToDoCardVariant;
+    callback?: () => void;
+  }) => {
+    notifications.update({
+      id: toastId,
+      withCloseButton: true,
+      autoClose: 5000,
+      title: "Success",
+      message: `The ToDo was ${
+        action === "creating" ? "created" : "updated"
+      } successfully`,
+      color: "green",
+      style: { backgroundColor: "#ecfdf5" },
+      loading: false,
+    });
+    if (callback) callback();
   },
 };
 
@@ -111,17 +151,26 @@ export default function ToDoCard(props: ToDoCardProps) {
       });
     }
 
+    const toastId = notification.loading({
+      message: `${variant.charAt(0).toUpperCase() + variant.slice(1)} the ToDo`,
+    });
+
     props.handleSubmitToDo(variant, toDoData);
-    handleFormReset();
-    // setIsSubmitting(false);
+    notification.success({
+      toastId: toastId,
+      action: variant,
+      callback: handleFormReset,
+    });
   };
 
-  const actions = {
+  const actions: ToDoCardButtonSectionActions = {
     setIsEditing,
     setIsBeeingDeleted,
     setCurrentEditingToDo: props.setCurrentEditingToDo,
     handleSubmit,
   };
+
+  if (props.handleDeleteToDo) actions.handleDelete = props.handleDeleteToDo;
 
   return (
     <Card

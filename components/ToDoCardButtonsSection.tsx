@@ -10,6 +10,7 @@ function ToDoCardButtonsSection({
     setIsBeeingDeleted,
     setCurrentEditingToDo,
     handleSubmit,
+    handleDelete,
   },
 }: {
   id: string;
@@ -78,7 +79,12 @@ function ToDoCardButtonsSection({
         <Button color="gray" onClick={() => setIsBeeingDeleted(false)}>
           Cancel
         </Button>
-        <Button color="blue">Confirm delete</Button>
+        <Button
+          color="blue"
+          onClick={() => (handleDelete ? handleDelete(id) : "")}
+        >
+          Confirm delete
+        </Button>
       </Group>
     );
 }
