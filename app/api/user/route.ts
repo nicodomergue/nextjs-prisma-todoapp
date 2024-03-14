@@ -3,21 +3,35 @@ import { db } from "../../../lib/db";
 import { hash } from "bcrypt";
 import { z } from "zod";
 
-// Define a schema for user form input validation
 const userSchema = z
   .object({
     username: z
       .string()
-      .min(3, "The username must be at least 3 characters long")
-      .max(25, "The username cannot be longer than 25 characters"),
+      .min(3, "Username must be at least 3 characters long")
+      .max(25, "Username cannot be longer than 25 characters"),
     email: z.string().email({ message: "Invalid email" }),
     password: z
       .string()
-      .min(5, "The password must be at least 5 characters long")
-      .regex(/\d/, "The password must contain at least one number")
-      .max(20, "The password cannot be more than 20 characters long"),
-    confirmPassword: z.string(),
+      .min(5, "Password must be at least 5 characters long")
+      .regex(/\d/, "Password must contain at least one number")
+      .max(20, "Password cannot be more than 20 characters long"),
+    confirmPassword: z
+      .string()
+      .min(5, "Password must be at least 5 characters long")
+      .regex(/\d/, "Password must contain at least one number")
+      .max(20, "Password cannot be more than 20 characters long"),
   })
+  .refine(
+    (values) => {
+      const hasSpaceOrSpecialCharacters =
+        /[\s~`!@#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/;
+      return !hasSpaceOrSpecialCharacters.test(values.username);
+    },
+    {
+      message: "Username cannot have spaces or special characters",
+      path: ["username"],
+    }
+  )
   .refine(
     (values) => {
       return values.password === values.confirmPassword;
