@@ -14,7 +14,7 @@ import {
   Title,
 } from "@mantine/core";
 import React, { useEffect, useState } from "react";
-import GoogleIcon from "../GoogleIcon";
+import GoogleIcon from "../../../components/GoogleIcon";
 import Link from "next/link";
 import { useForm, zodResolver } from "@mantine/form";
 import { z } from "zod";

@@ -14,12 +14,13 @@ import {
   Title,
 } from "@mantine/core";
 import React, { useState } from "react";
-import GoogleIcon from "../GoogleIcon";
+import GoogleIcon from "../../../components/GoogleIcon";
 import Link from "next/link";
 import { z } from "zod";
 import { useForm, zodResolver } from "@mantine/form";
 import { useRouter } from "next/navigation";
 import { notifications } from "@mantine/notifications";
+import { signIn } from "next-auth/react";
 
 const userFormSchema = z
   .object({
@@ -103,16 +104,22 @@ function SignIn() {
     });
 
     if (response.ok) {
-      router.push("/");
+      console.log(response);
+      const signInData = await signIn("credentials", {
+        ...form.values,
+        // redirect: false,
+        redirect: true,
+        callbackUrl: `${window.location.origin}/`,
+      });
+      console.log(signInData);
     } else {
       notifications.show({
         withCloseButton: true,
         title: "Oops...",
-        message: "There was an error creating the user",
+        message: "There was an error while login in",
         color: "red",
         style: { backgroundColor: "#fef2f2" },
       });
-      console.error("Registration error");
       setIsSubmitting(false);
     }
   };
