@@ -104,14 +104,11 @@ function SignIn() {
     });
 
     if (response.ok) {
-      console.log(response);
       const signInData = await signIn("credentials", {
         ...form.values,
-        // redirect: false,
         redirect: true,
         callbackUrl: `${window.location.origin}/`,
       });
-      console.log(signInData);
     } else {
       notifications.show({
         withCloseButton: true,

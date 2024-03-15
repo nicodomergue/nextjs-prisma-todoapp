@@ -4,6 +4,7 @@ import { Stack, Text } from "@mantine/core";
 import React, { useEffect, useState } from "react";
 import ToDoCard from "./ToDoCard";
 import { v4 as uuid } from "uuid";
+import { db } from "../lib/db";
 
 function ToDoList() {
   const [newToDoData, setNewToDoData] = useState<ToDo>({
@@ -11,6 +12,9 @@ function ToDoList() {
     title: "",
     description: "",
   });
+
+  // const todos = db
+
   const [toDos, setToDos] = useState<ToDo[]>([
     {
       id: uuid(),
