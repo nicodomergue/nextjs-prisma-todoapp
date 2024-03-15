@@ -186,7 +186,7 @@ export default function ToDoCard(props: ToDoCardProps) {
             <Title children="New ToDo" size="md" />
             <Button
               variant="light"
-              color="red"
+              color="gray"
               size="sm"
               onClick={handleSubmit}
               disabled={
