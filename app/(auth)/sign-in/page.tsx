@@ -119,7 +119,7 @@ function SignIn() {
 
   return (
     <Container py="lg" h="100vh">
-      <Center h="100vh">
+      <Center h="100%">
         <Card withBorder w="440px" px="xl" radius="lg" shadow="xs">
           <Title size="h3" py="sm" c="gray.8">
             Sign In:
