@@ -1,0 +1,80 @@
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "../../../lib/db";
+import { z } from "zod";
+import { v4 as uuid } from "uuid";
+import { getToken } from "next-auth/jwt";
+
+export async function POST(req: NextRequest, res: Response) {
+  try {
+    const body = await req.json();
+
+    const token = await getToken({ req });
+    if (!token || !token.sub)
+      return NextResponse.json(
+        {
+          message:
+            "User session not found. Try logging out and logging back in.",
+        },
+        { status: 401 }
+      );
+
+    const newToDo = await db.toDo.create({
+      data: {
+        id: uuid(),
+        title: body.title,
+        description: body.description,
+        userId: token.sub,
+      },
+    });
+
+    return NextResponse.json(
+      {
+        message: "Post request sent",
+        newToDo,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      {
+        message: "Oops... There was an error",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(req: NextRequest, res: Response) {
+  console.log("READING TODOs FROM DB");
+  try {
+    const token = await getToken({ req });
+    if (!token)
+      return NextResponse.json(
+        {
+          message:
+            "User session not found. Try logging out and logging back in.",
+        },
+        { status: 401 }
+      );
+
+    const userId = token.sub;
+    const userToDos: ToDo[] = await db.toDo.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+
+    return NextResponse.json(
+      { message: "ToDos queried from the database", userToDos: userToDos },
+      { status: 200 }
+    );
+  } catch (err) {
+    return NextResponse.json(
+      {
+        message: "Oops... There was an error",
+      },
+      { status: 500 }
+    );
+  }
+}

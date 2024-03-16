@@ -120,7 +120,9 @@ export default function ToDoCard(props: ToDoCardProps) {
     titleRef.current?.focus();
   };
 
-  const handleSubmit: ToDoCardButtonSectionActions["handleSubmit"] = (e) => {
+  const handleSubmit: ToDoCardButtonSectionActions["handleSubmit"] = async (
+    e
+  ) => {
     setIsSubmitting(true);
     console.log(`Submitting: ${variant}`);
     if (!toDoData.title) {
@@ -155,7 +157,7 @@ export default function ToDoCard(props: ToDoCardProps) {
       message: `${variant.charAt(0).toUpperCase() + variant.slice(1)} the ToDo`,
     });
 
-    props.handleSubmitToDo(variant, toDoData);
+    await props.handleSubmitToDo(variant, toDoData);
     notification.success({
       toastId: toastId,
       action: variant,
