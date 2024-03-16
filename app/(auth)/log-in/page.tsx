@@ -119,18 +119,11 @@ function LogIn() {
             >
               Log In
             </Button>
-            <Divider my="xs" label="or" labelPosition="center" />
-            <Button
-              leftSection={<GoogleIcon />}
-              variant="default"
-              children="Log in with Google"
-              disabled={isSubmitting}
-            />
           </Stack>
-          <Text ta="center" mb="sm">
+          <Text ta="center" mb="lg">
             If you dont have an acount, you can
             <Anchor component={Link} href="/sign-in" ms={6}>
-              Sign Up
+              Sign In
             </Anchor>
           </Text>
         </Card>

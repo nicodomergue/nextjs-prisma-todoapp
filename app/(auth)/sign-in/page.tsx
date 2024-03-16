@@ -173,15 +173,8 @@ function SignIn() {
             >
               Sign In
             </Button>
-            <Divider my="xs" label="or" labelPosition="center" />
-            <Button
-              leftSection={<GoogleIcon />}
-              variant="default"
-              children="Sign in with Google"
-              disabled={isSubmitting}
-            />
           </Stack>
-          <Text ta="center" mb="sm">
+          <Text ta="center" mb="lg">
             Already have an account?
             <Anchor component={Link} href="/log-in" ms={5}>
               Log in

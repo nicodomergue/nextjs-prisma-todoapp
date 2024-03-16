@@ -4,11 +4,14 @@ import { MantineProvider, ColorSchemeScript } from "@mantine/core";
 import { theme } from "../theme";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 export const metadata = {
   title: "Mantine Next.js template",
   description: "I am using Mantine with Next.js!",
 };
+
+const queryClient = new QueryClient();
 
 export default function RootLayout({ children }: { children: any }) {
   return (
@@ -22,10 +25,12 @@ export default function RootLayout({ children }: { children: any }) {
         />
       </head>
       <body style={{ maxHeight: "100vh" }}>
-        <MantineProvider theme={theme}>
-          <Notifications />
-          {children}
-        </MantineProvider>
+        <QueryClientProvider client={queryClient}>
+          <MantineProvider theme={theme}>
+            <Notifications />
+            {children}
+          </MantineProvider>
+        </QueryClientProvider>
       </body>
     </html>
   );
