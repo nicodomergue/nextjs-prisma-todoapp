@@ -73,17 +73,18 @@ export default function ToDoCard(props: ToDoCardProps) {
   const titleRef = useRef<HTMLInputElement | null>(null);
 
   const [isEditing, setIsEditing] = useState(!!props.isEditing);
-  const [isBeeingDeleted, setIsBeeingDeleted] = useState(false);
   const [toDoData, setToDoData] = useState({
     id: props.id,
     title: props.title,
     description: props.description,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isTryingToDelete, setIsTryingToDelete] = useState(false);
+  const [isBeeingDeleted, setIsBeeingDeleted] = useState(false);
 
   const defineVariant = (): ToDoCardVariant => {
     if (!props.title && isEditing) return "creating";
-    if (isBeeingDeleted) return "deleting";
+    if (isTryingToDelete) return "deleting";
     if (isEditing) return "editing";
     return "viewing";
   };
@@ -93,7 +94,7 @@ export default function ToDoCard(props: ToDoCardProps) {
     if (isEditing) titleRef.current?.focus();
     const newVariant = defineVariant();
     if (newVariant !== variant) setVariant(defineVariant());
-  }, [isEditing, isBeeingDeleted]);
+  }, [isEditing, isTryingToDelete]);
 
   useEffect(() => {
     if (
@@ -167,12 +168,25 @@ export default function ToDoCard(props: ToDoCardProps) {
 
   const actions: ToDoCardButtonSectionActions = {
     setIsEditing,
-    setIsBeeingDeleted,
+    setIsTryingToDelete,
     setCurrentEditingToDo: props.setCurrentEditingToDo,
     handleSubmit,
   };
 
-  if (props.handleDeleteToDo) actions.handleDelete = props.handleDeleteToDo;
+  if (props.handleDeleteToDo)
+    actions.handleDelete = async (id) => {
+      if (!props.handleDeleteToDo) return;
+      setIsBeeingDeleted(true);
+      await props.handleDeleteToDo(id);
+      notifications.show({
+        id: `notification-${uuid()}`,
+        withCloseButton: true,
+        autoClose: 5000,
+        title: "Successfully deleted",
+        message: "The ToDo was successfully deleted",
+        color: "green",
+      });
+    };
 
   return (
     <Card
@@ -237,6 +251,7 @@ export default function ToDoCard(props: ToDoCardProps) {
           actions={actions}
           id={props.id}
           isSubmitting={isSubmitting}
+          isBeeingDeleted={isBeeingDeleted}
         />
       </Stack>
     </Card>

@@ -13,8 +13,16 @@ async function HomePage() {
     method: "GET",
     headers: headers(),
   });
-  const res = await userToDosQuery.json();
-  const userToDos: ToDo[] = res.userToDos;
+
+  let userToDos: ToDo[] = [];
+
+  if (!userToDosQuery.ok) {
+    console.log(userToDosQuery);
+    return;
+  } else {
+    const res = await userToDosQuery.json();
+    userToDos = res.userToDos;
+  }
 
   return (
     <Container py="lg">

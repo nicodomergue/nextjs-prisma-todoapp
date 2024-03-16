@@ -23,7 +23,7 @@ interface ToDoCardProps
 
 interface ToDoCardButtonSectionActions {
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsBeeingDeleted: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsTryingToDelete: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentEditingToDo: React.Dispatch<React.SetStateAction<string | null>>;
   handleSubmit: (e: React.MouseEvent<HTMLElement>) => void;
   handleDelete?: (id: string) => void;

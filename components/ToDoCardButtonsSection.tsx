@@ -5,9 +5,10 @@ function ToDoCardButtonsSection({
   id,
   variant = "creating",
   isSubmitting,
+  isBeeingDeleted,
   actions: {
     setIsEditing,
-    setIsBeeingDeleted,
+    setIsTryingToDelete,
     setCurrentEditingToDo,
     handleSubmit,
     handleDelete,
@@ -16,6 +17,7 @@ function ToDoCardButtonsSection({
   id: string;
   variant: ToDoCardVariant;
   isSubmitting: boolean;
+  isBeeingDeleted: boolean;
   actions: ToDoCardButtonSectionActions;
 }) {
   const handleEditToDo: () => void = () => {
@@ -49,7 +51,7 @@ function ToDoCardButtonsSection({
         <Button
           variant="light"
           color="red"
-          onClick={() => setIsBeeingDeleted(true)}
+          onClick={() => setIsTryingToDelete(true)}
         >
           Delete
         </Button>
@@ -76,12 +78,18 @@ function ToDoCardButtonsSection({
   if (variant === "deleting")
     return (
       <Group gap="md" grow>
-        <Button color="gray" onClick={() => setIsBeeingDeleted(false)}>
+        <Button
+          color="gray"
+          onClick={() => setIsTryingToDelete(false)}
+          disabled={isBeeingDeleted}
+        >
           Cancel
         </Button>
         <Button
-          color="blue"
+          color="red"
           onClick={() => (handleDelete ? handleDelete(id) : "")}
+          loading={isBeeingDeleted}
+          disabled={isBeeingDeleted}
         >
           Confirm delete
         </Button>

@@ -46,8 +46,35 @@ function ToDoList({ userToDos }: { userToDos: ToDo[] }) {
         const newToDo: ToDo = result.newToDo;
         setToDos([...toDos, newToDo]);
       } else {
-        // UPDATE TO DO
-        // setToDos(toDos.map((item) => (item.id === toDo.id ? toDo : item)));
+        const currentData = toDos.filter((item) => item.id === toDo.id)[0];
+        const editedValues: { title?: string; description?: string } = {};
+        Object.entries(toDo).forEach(
+          ([key, value]: [key: string, value: any]) => {
+            if (key !== "title" && key !== "description") return;
+            if (toDo[key] === currentData[key]) return;
+            editedValues[key] = value;
+          }
+        );
+
+        const response = await fetch(`/api/todos`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            toDoId: currentData.id,
+            editedValues,
+          }),
+        });
+
+        if (!response.ok) throw (await response.json()).message;
+        const result = await response.json();
+        console.log(result);
+
+        const editedToDo = result.updatedToDo;
+        setToDos(
+          toDos.map((item) => (item.id === editedToDo.id ? editedToDo : item))
+        );
       }
     } catch (err) {
       console.log("THERE WAS AN ERROR");
@@ -55,8 +82,19 @@ function ToDoList({ userToDos }: { userToDos: ToDo[] }) {
     }
   };
 
-  const handleDeleteToDo = (id: string) => {
+  const handleDeleteToDo = async (id: string) => {
     // DELETE TO DO
+    const response = await fetch(`/api/todos`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        toDoId: id,
+      }),
+    });
+
+    if (!response.ok) throw (await response.json()).message;
     setToDos(toDos.filter((item) => item.id !== id));
   };
 
