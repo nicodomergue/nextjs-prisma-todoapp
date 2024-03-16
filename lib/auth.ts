@@ -51,10 +51,11 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
         return {
           ...token,
+          accessToken: account?.access_token,
           username: user.username,
         };
       }
@@ -68,7 +69,6 @@ export const authOptions: NextAuthOptions = {
           username: token.username,
         },
       };
-      return session;
     },
   },
 };

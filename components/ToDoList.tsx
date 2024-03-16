@@ -1,58 +1,57 @@
 "use client";
 
 import { Stack, Text } from "@mantine/core";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ToDoCard from "./ToDoCard";
 import { v4 as uuid } from "uuid";
-import { db } from "../lib/db";
 
-function ToDoList() {
-  const [newToDoData, setNewToDoData] = useState<ToDo>({
-    id: uuid(),
+function ToDoList({ userToDos }: { userToDos: ToDo[] }) {
+  const [newToDoData, setNewToDoData] = useState({
+    id: "",
     title: "",
     description: "",
   });
 
-  // const todos = db
-
-  const [toDos, setToDos] = useState<ToDo[]>([
-    {
-      id: uuid(),
-      title: "ToDo 1",
-      description: "Descripción del primer ToDo",
-    },
-    {
-      id: uuid(),
-      title: "ToDo 2",
-      description: "Descripción del segundo ToDo",
-    },
-    {
-      id: uuid(),
-      title: "ToDo 3",
-      description: "Descripción del tercer ToDo",
-    },
-  ]);
+  const [toDos, setToDos] = useState<ToDo[]>(userToDos);
   const [currentEditingToDo, setCurrentEditingToDo] = useState<null | string>(
     null
   );
 
-  const handleSubmitToDo = (
+  const handleSubmitToDo = async (
     action: ToDoCardVariant,
-    toDo: { id: undefined; title: string; description: string } | ToDo
+    toDo:
+      | ToDo
+      | {
+          id: string;
+          title: string;
+          description: string;
+        }
   ) => {
-    if (!toDo.id || action === "creating") {
-      // CREATE TO DO
-      setToDos([
-        ...toDos,
-        {
-          id: uuid(),
-          title: toDo.title,
-          description: toDo.description,
-        },
-      ]);
-    } else {
-      // UPDATE TO DO
-      setToDos(toDos.map((item) => (item.id === toDo.id ? toDo : item)));
+    try {
+      if (!toDo.id || action === "creating") {
+        // CREATE TO DO
+        const response = await fetch(`/api/todos`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: toDo.title,
+            description: toDo.description,
+          }),
+        });
+
+        if (!response.ok) throw (await response.json()).message;
+        const result = await response.json();
+        const newToDo: ToDo = result.newToDo;
+        setToDos([...toDos, newToDo]);
+      } else {
+        // UPDATE TO DO
+        // setToDos(toDos.map((item) => (item.id === toDo.id ? toDo : item)));
+      }
+    } catch (err) {
+      console.log("THERE WAS AN ERROR");
+      console.log(err);
     }
   };
 
@@ -64,7 +63,7 @@ function ToDoList() {
   return (
     <Stack>
       <ToDoCard
-        key={newToDoData.id}
+        key={"newToDoCard"}
         isEditing={true}
         {...{ ...newToDoData, setCurrentEditingToDo, handleSubmitToDo }}
       />
