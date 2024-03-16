@@ -1,7 +1,7 @@
 "use client";
 
 import { Stack, Text } from "@mantine/core";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ToDoCard from "./ToDoCard";
 import { v4 as uuid } from "uuid";
 
@@ -13,6 +13,13 @@ function ToDoList({ userToDos }: { userToDos: ToDo[] }) {
   });
 
   const [toDos, setToDos] = useState<ToDo[]>(userToDos);
+  useEffect(() => {
+    if (!toDos) {
+      console.log("No ToDos fetched yet");
+    } else {
+      console.log("ToDos already fetched");
+    }
+  }, [toDos]);
   const [currentEditingToDo, setCurrentEditingToDo] = useState<null | string>(
     null
   );

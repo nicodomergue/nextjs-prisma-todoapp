@@ -68,6 +68,9 @@ export async function GET(req: NextRequest, res: Response) {
       where: {
         userId: userId,
       },
+      orderBy: {
+        createdAt: "asc",
+      },
     });
 
     return NextResponse.json(
