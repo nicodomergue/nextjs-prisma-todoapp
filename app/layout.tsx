@@ -4,7 +4,7 @@ import { MantineProvider, ColorSchemeScript } from "@mantine/core";
 import { theme } from "../theme";
 import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
-import ReactQueryProvider from "../components/providers/ReactQueryProvider";
+import QueryProvider from "../components/providers/ReactQueryProvider";
 
 export const metadata = {
   title: "Mantine Next.js template",
@@ -23,12 +23,12 @@ export default function RootLayout({ children }: { children: any }) {
         />
       </head>
       <body style={{ maxHeight: "100vh" }}>
-        <ReactQueryProvider>
+        <QueryProvider>
           <MantineProvider theme={theme}>
             <Notifications />
             {children}
           </MantineProvider>
-        </ReactQueryProvider>
+        </QueryProvider>
       </body>
     </html>
   );

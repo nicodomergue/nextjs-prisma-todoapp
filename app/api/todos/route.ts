@@ -1,12 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "../../../lib/db";
+import { db } from "../../../server/db/db";
 import { z } from "zod";
 import { v4 as uuid } from "uuid";
 import { JWT, getToken } from "next-auth/jwt";
-
-const requireSession = (token: JWT | null) => {
-  if (!token || !token.sub) throw "Unauthenticated user";
-};
 
 export async function POST(req: NextRequest, res: Response) {
   try {

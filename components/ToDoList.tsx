@@ -1,25 +1,46 @@
 "use client";
 
-import { Stack, Text } from "@mantine/core";
+import { Skeleton, Stack, Text } from "@mantine/core";
 import React, { useEffect, useState } from "react";
 import ToDoCard from "./ToDoCard";
 import { v4 as uuid } from "uuid";
+import { useQuery } from "@tanstack/react-query";
 
-function ToDoList({ userToDos }: { userToDos: ToDo[] }) {
+function ToDoList() {
+  const getUserToDos = async (): Promise<ToDo[]> => {
+    const userToDosQuery = await fetch(`/api/todos`, {
+      method: "GET",
+    });
+
+    if (userToDosQuery.ok) {
+      const res = await userToDosQuery.json();
+      console.log("Fetched ToDos");
+      return res.userToDos;
+    } else {
+      return [];
+    }
+  };
+
+  const { data, error, isFetched, isLoading } = useQuery({
+    queryKey: ["todos"],
+    queryFn: getUserToDos,
+    refetchOnMount: true,
+    staleTime: Infinity,
+  });
+
   const [newToDoData, setNewToDoData] = useState({
     id: "",
     title: "",
     description: "",
   });
 
-  const [toDos, setToDos] = useState<ToDo[]>(userToDos);
+  const [toDos, setToDos] = useState<ToDo[]>([]);
+
   useEffect(() => {
-    if (!toDos) {
-      console.log("No ToDos fetched yet");
-    } else {
-      console.log("ToDos already fetched");
-    }
-  }, [toDos]);
+    if (!data) return;
+    setToDos(data);
+  }, [data]);
+
   const [currentEditingToDo, setCurrentEditingToDo] = useState<null | string>(
     null
   );
@@ -112,12 +133,17 @@ function ToDoList({ userToDos }: { userToDos: ToDo[] }) {
         isEditing={true}
         {...{ ...newToDoData, setCurrentEditingToDo, handleSubmitToDo }}
       />
-      {toDos.length === 0 ? (
+      {isLoading ? (
         <>
-          <Text ta="center" mt="md" c="gray.5">
-            There are no ToDo's on the list
-          </Text>
+          <Skeleton height={181.97} mt={6} radius="md">
+            <Skeleton height={10} circle mt={6} />
+          </Skeleton>
+          <Skeleton height={181.97} mt={6} radius="md" />
         </>
+      ) : toDos.length === 0 ? (
+        <Text ta="center" mt="md" c="gray.5">
+          There are no ToDo's on the list
+        </Text>
       ) : (
         toDos.map((toDo) => (
           <ToDoCard

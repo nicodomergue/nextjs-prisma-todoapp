@@ -4,28 +4,24 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../lib/auth";
 import SignOutButton from "../components/SignOutButton";
 import { headers } from "next/headers";
-import { useQueryClient } from "@tanstack/react-query";
-import { Suspense } from "react";
-
-const getUserToDos = async () => {
-  const userToDosQuery = await fetch(`${process.env.NEXTAUTH_URL}/api/todos`, {
-    method: "GET",
-    headers: headers(),
-  });
-
-  if (userToDosQuery.ok) {
-    const res = await userToDosQuery.json();
-    return res.userToDos;
-  } else {
-    return [];
-  }
-};
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+  useQueryClient,
+} from "@tanstack/react-query";
+// import { getUserToDos } from "../server/actions";
 
 async function HomePage() {
   const session = await getServerSession(authOptions);
   const username = session?.user.username;
 
-  let userToDos: ToDo[] = await getUserToDos();
+  // let userToDos: ToDo[] = await getUserToDos();
+  const queryClient = new QueryClient();
+  // await queryClient.prefetchQuery({
+  //   queryKey: ["todos"],
+  //   queryFn: getUserToDos,
+  // });
 
   return (
     <Container py="lg">
@@ -37,7 +33,9 @@ async function HomePage() {
             </Title>
             {session?.user ? <SignOutButton /> : ""}
           </Group>
-          <ToDoList userToDos={userToDos} />
+          <HydrationBoundary state={dehydrate(queryClient)}>
+            <ToDoList />
+          </HydrationBoundary>
         </Stack>
       </Center>
     </Container>
