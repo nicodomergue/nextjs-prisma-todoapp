@@ -37,8 +37,7 @@ function ToDoList() {
   const [toDos, setToDos] = useState<ToDo[]>([]);
 
   useEffect(() => {
-    if (!data) return;
-    setToDos(data);
+    if (data) setToDos(data);
   }, [data]);
 
   const [currentEditingToDo, setCurrentEditingToDo] = useState<null | string>(
